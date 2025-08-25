@@ -541,7 +541,7 @@
     setTimeout(()=>{
       try{ playChaChing(); }catch(_){}
       modalTitle.textContent = "Anda Mendapat Hadiah";
-      winMessageEl.textContent = `Selamat Bosku mendapatkan ${hadiahStr}`;
+      winMessageEl.textContent = `🎉Selamat Bosku mendapatkan ${hadiahStr}`;
       const rows = prizes.map((p,i)=>{
         const pNum = Number((p.amount||'').replace(/[^\d]/g, ''));
         const cls = (pNum===hadiahNum) ? ' style="background:#a6ffff;color:#0a0d25;font-weight:900;"' : '';
