@@ -238,7 +238,7 @@ html.lite .chip{ animation:shuffle-x .7s ease-in-out infinite, shuffle-pop .12s 
     </aside>
 
     <aside class="panel">
-      <h3>SELAMAT! DAPAT HADIAH</h3>
+      <h3>SELAMAT BOSKU DAPAT HADIAH💸</h3>
       <div class="prize-result" id="result">
         <div class="tiny" style="margin-bottom:6px">Hasil undian:</div>
         <p class="msg" id="resultMsg">—</p>
@@ -246,7 +246,7 @@ html.lite .chip{ animation:shuffle-x .7s ease-in-out infinite, shuffle-pop .12s 
           <a class="btn claim-wa" id="claimWA" target="_blank" rel="noopener">CLAIM HADIAH WA</a>
           <a class="btn claim-tg" id="claimTG" target="_blank" rel="noopener">CLAIM HADIAH TELEGRAM</a>
         </div>
-        <p class="tiny" id="footnote" style="margin-top:8px">Kode klaim: —</p>
+        <p class="tiny" id="footnote" style="margin-top:8px">Kode klaim: TERPAKAI</p>
       </div>
     </aside>
   </div>
@@ -401,8 +401,8 @@ function showGrid(){
   for(let i=0;i<28;i++) { frag.appendChild(makeBackDomino()); }
   grid.appendChild(frag); board.appendChild(grid);
   refreshPipSize();
-  if (forcedPrizeObj) { hint.textContent = 'Klik kartu mana saja untuk membuka hadiah utama!'; }
-  else { hint.textContent = canPick ? 'PILIH 1 GAPLE' : 'Tekan PUTAR GO GAPLE dulu'; }
+  if (forcedPrizeObj) { hint.textContent = 'Pilih 1 kartu mana saja buka hadiah Bosku💎'; }
+  else { hint.textContent = canPick ? 'PILIH 1 GAPLE' : '💡SPIN PUTAR GO GAPLE'; }
 }
 
 function makeBackDomino(){
@@ -433,7 +433,7 @@ function onPick(cardEl, topHalf, botHalf) {
     refreshPipSize();
     kartu = forcedPrizeObj;
   } else {
-    if(!canPick || busy || picked){ if(!canPick && !busy) { hint.textContent = 'Tekan PUTAR GO GAPLE dulu'; } return; }
+    if(!canPick || busy || picked){ if(!canPick && !busy) { hint.textContent = '💡SPIN PUTAR GO GAPLE'; } return; }
     picked = true; canPick = false; busy = true;
     document.querySelectorAll('.domino').forEach(n=>{ n.classList.remove('ready'); n.style.pointerEvents='none'; });
     const pool = DECK.filter(t=> MEMBER_LOW_ONLY ? (!t.balak && t.total>=1 && t.total<=8) : true);
@@ -525,13 +525,13 @@ function lockIfPlayed(){
     btnStart.disabled = true;
     btnStart.textContent = 'SUDAH MAIN';
     btnStart.style.filter = 'grayscale(0.7) brightness(0.9)';
-    hint.textContent = 'Sudah dimainkan sekali (aktif lagi setelah browser ditutup).';
+    hint.textContent = 'CLAIM SCROOL KEBEWAH BOSKU 👇';
     return true;
   }
   btnStart.disabled = false;
   btnStart.textContent = 'PUTAR GO GAPLE';
   btnStart.style.filter = '';
-  hint.textContent = 'Tekan PUTAR GO GAPLE dulu';
+  hint.textContent = '💡SPIN PUTAR GO GAPLE';
   return false;
 }
 function setPlayedOnce(){ Locker.set(getPlayKey()); }
@@ -564,7 +564,7 @@ const btnStartHandler = ()=>{
   }
   if (isClaimed(s.kupon)) {
     setTimeout(()=>{
-      resultMsg.innerHTML = 'Kupon sudah pernah dipakai!';
+      resultMsg.innerHTML = 'Kupon sudah pernah dipakai⛔';
       resultBox.classList.add('show');
       lockIfPlayed();
       busy = false;
@@ -645,7 +645,7 @@ btnStart.addEventListener('click', btnStartHandler, {passive:true});
       .then(data=>{
         if (data.msg && data.msg.toLowerCase().includes('terpakai')) {
           lockIfPlayed();
-          resultMsg.innerHTML = 'Kupon sudah pernah dipakai!';
+          resultMsg.innerHTML = 'Kupon sudah pernah dipakai⛔';
           resultBox.classList.add('show');
           setClaimed(s.kupon);
         }
