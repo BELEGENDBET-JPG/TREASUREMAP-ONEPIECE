@@ -429,7 +429,11 @@ let forcedPrizeObj = null;
 
 function onPick(cardEl, topHalf, botHalf) {
   let kartu = null;
+  
   if (forcedPrizeObj) {
+    // PLAY WHOOSH SOUND UNTUK PILIH KARTU GAPLE (hanya jika game aktif)
+    playWhoosh();
+    
     picked = true; canPick = false; busy = true;
     document.querySelectorAll('.domino').forEach(n => { n.classList.remove('ready'); n.style.pointerEvents = 'none'; });
     drawHalf(topHalf, forcedPrizeObj.a);
@@ -440,6 +444,10 @@ function onPick(cardEl, topHalf, botHalf) {
     kartu = forcedPrizeObj;
   } else {
     if(!canPick || busy || picked){ if(!canPick && !busy) { hint.textContent = '💡SPIN PUTAR GO GAPLE'; } return; }
+    
+    // PLAY WHOOSH SOUND UNTUK PILIH KARTU GAPLE (hanya jika game aktif)
+    playWhoosh();
+    
     picked = true; canPick = false; busy = true;
     document.querySelectorAll('.domino').forEach(n=>{ n.classList.remove('ready'); n.style.pointerEvents='none'; });
     const pool = DECK.filter(t=> MEMBER_LOW_ONLY ? (!t.balak && t.total>=1 && t.total<=8) : true);
@@ -480,6 +488,10 @@ function onPick(cardEl, topHalf, botHalf) {
   resultMsg.innerHTML = `Selamat! Kamu mendapatkan <strong>${hadiahStr}</strong>`;
   claimWA.setAttribute('href', DEST_WA);
   claimTG.setAttribute('href', DEST_TG);
+  
+  // PLAY CHA-CHING SOUND UNTUK HADIAH GAPLE
+  playChaChing();
+  
   resultBox.classList.add('show');
   lockIfPlayed();
   busy = false;
@@ -551,6 +563,9 @@ function setPlayedOnce(){ Locker.set(getPlayKey()); }
 const btnStartHandler = ()=>{
   if(busy || hasSpun) return; // Cegah jika sudah pernah spin
   if(isPlayed()) { lockIfPlayed(); return; }
+
+  // MULAI SUARA BEEP BEEP UNTUK GAPLE SPIN
+  startBeepSound();
 
   picked = false;
   resultBox.classList.remove('show');
@@ -628,6 +643,9 @@ const btnStartHandler = ()=>{
         lockIfPlayed();
       }
       setTimeout(()=>{
+        // STOP SUARA BEEP SETELAH SHUFFLE SELESAI
+        stopBeepSound();
+        
         showGrid();
         // Jangan enable tombol lagi jika sudah spin
         if (!hasSpun) {
@@ -680,6 +698,265 @@ btnStart.addEventListener('click', btnStartHandler, {passive:true});
       }).catch(()=>{});
   }
 })();
+
+/* ==== SISTEM AUDIO - 3 SUARA GAPLE ==== */
+let audioCtx;
+let beepSound = null;
+let isBeepPlaying = false;
+
+function getCtx(){ 
+  if(!audioCtx){ 
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
+      console.log('Audio context created, state:', audioCtx.state);
+    } catch (e) {
+      console.error('Failed to create audio context:', e);
+      return null;
+    }
+  } 
+  if(audioCtx.state === 'suspended') {
+    audioCtx.resume().then(() => {
+      console.log('Audio context resumed, state:', audioCtx.state);
+    }).catch(e => {
+      console.error('Failed to resume audio context:', e);
+    });
+  }
+  return audioCtx; 
+}
+
+// Initialize audio context on first user interaction
+let audioInitialized = false;
+function initAudioOnInteraction() {
+  if (audioInitialized) return;
+  audioInitialized = true;
+  try { 
+    getCtx(); 
+    console.log('Audio initialized on user interaction');
+  } catch(e) {
+    console.error('Audio initialization failed:', e);
+  }
+}
+
+window.addEventListener('pointerdown', initAudioOnInteraction, {once:true, passive:true});
+window.addEventListener('click', initAudioOnInteraction, {once:true, passive:true});
+window.addEventListener('touchstart', initAudioOnInteraction, {once:true, passive:true});
+
+// 1. SUARA BEEP BEEP untuk TOMBOL PUTAR GO GAPLE
+function createBeepSound() {
+  try {
+    const ctx = getCtx();
+    if (!ctx) return null;
+    
+    // Buat oscillator untuk suara beep
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    
+    osc1.type = 'square';
+    osc1.frequency.value = 800; // High frequency beep
+    
+    osc2.type = 'sine';
+    osc2.frequency.value = 600; // Lower harmonic
+    
+    // Gain untuk masing-masing oscillator
+    const gain1 = ctx.createGain();
+    const gain2 = ctx.createGain();
+    const masterGain = ctx.createGain();
+    
+    gain1.gain.value = 0.4;
+    gain2.gain.value = 0.2;
+    masterGain.gain.value = 0;
+    
+    // High-pass filter untuk suara beep yang crisp
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = 400;
+    filter.Q.value = 2;
+    
+    // Connection
+    osc1.connect(gain1);
+    osc2.connect(gain2);
+    gain1.connect(filter);
+    gain2.connect(filter);
+    filter.connect(masterGain);
+    masterGain.connect(ctx.destination);
+    
+    return { 
+      osc1: osc1, 
+      osc2: osc2, 
+      gain: masterGain, 
+      filter: filter,
+      gain1: gain1,
+      gain2: gain2
+    };
+  } catch (e) {
+    console.error('Error creating beep sound:', e);
+    return null;
+  }
+}
+
+function startBeepSound() {
+  if (isBeepPlaying) return;
+  
+  try {
+    const ctx = getCtx();
+    console.log('Starting beep beep sound for gaple spin...');
+    
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+    
+    isBeepPlaying = true;
+    
+    // Buat pattern beep-beep berulang
+    let beepCount = 0;
+    const maxBeeps = 8; // Total beep selama shuffle
+    
+    const createSingleBeep = () => {
+      if (!isBeepPlaying || beepCount >= maxBeeps) {
+        isBeepPlaying = false;
+        return;
+      }
+      
+      beepSound = createBeepSound();
+      if (beepSound) {
+        const currentTime = ctx.currentTime;
+        
+        // Start oscillators
+        beepSound.osc1.start(currentTime);
+        beepSound.osc2.start(currentTime);
+        
+        // Beep pattern: on 0.1s, off 0.1s
+        beepSound.gain.gain.setValueAtTime(0, currentTime);
+        beepSound.gain.gain.linearRampToValueAtTime(0.6, currentTime + 0.01);
+        beepSound.gain.gain.linearRampToValueAtTime(0.6, currentTime + 0.08);
+        beepSound.gain.gain.linearRampToValueAtTime(0, currentTime + 0.1);
+        
+        // Stop after beep duration
+        setTimeout(() => {
+          try {
+            if (beepSound) {
+              beepSound.osc1.stop();
+              beepSound.osc2.stop();
+            }
+          } catch (e) {
+            console.warn('Beep oscillators already stopped:', e);
+          }
+        }, 120);
+        
+        beepCount++;
+        
+        // Schedule next beep
+        setTimeout(createSingleBeep, 200);
+      }
+    };
+    
+    createSingleBeep();
+  } catch (e) {
+    console.error('Error starting beep sound:', e);
+    isBeepPlaying = false;
+  }
+}
+
+function stopBeepSound() {
+  isBeepPlaying = false;
+  console.log('Stopping beep sound...');
+}
+
+// 2. SUARA WHOOSH untuk PILIH KARTU GAPLE
+function playWhoosh(){
+  try {
+    const ctx = getCtx(); 
+    const dur = 0.45;
+    const bufferSize = ctx.sampleRate * dur;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    
+    for(let i=0;i<bufferSize;i++) data[i] = Math.random()*2-1;
+    
+    const src = ctx.createBufferSource(); 
+    src.buffer = buffer;
+    
+    const filter = ctx.createBiquadFilter(); 
+    filter.type='lowpass'; 
+    filter.frequency.setValueAtTime(400, ctx.currentTime); 
+    filter.frequency.exponentialRampToValueAtTime(8000, ctx.currentTime + dur);
+    
+    const gain = ctx.createGain(); 
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime); 
+    gain.gain.exponentialRampToValueAtTime(.6, ctx.currentTime+0.05); 
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+dur);
+    
+    src.connect(filter).connect(gain).connect(ctx.destination); 
+    src.start();
+    
+    console.log('Playing whoosh sound for gaple card pick');
+  } catch (e) {
+    console.warn('Error playing whoosh sound:', e);
+  }
+}
+
+// 3. SUARA CHA-CHING untuk HADIAH GAPLE
+function playChaChing(){
+  try {
+    const ctx = getCtx(); 
+    const t0 = ctx.currentTime + 0.02;
+    
+    const o1 = ctx.createOscillator(); 
+    o1.type='triangle'; 
+    const g1 = ctx.createGain(); 
+    g1.gain.setValueAtTime(0.0001, t0); 
+    g1.gain.exponentialRampToValueAtTime(0.7, t0+0.02); 
+    g1.gain.exponentialRampToValueAtTime(0.0001, t0+0.7); 
+    o1.frequency.setValueAtTime(1100, t0); 
+    o1.frequency.exponentialRampToValueAtTime(1600, t0+0.08);
+    
+    const o2 = ctx.createOscillator(); 
+    o2.type='square';   
+    const g2 = ctx.createGain(); 
+    g2.gain.setValueAtTime(0.0001, t0); 
+    g2.gain.exponentialRampToValueAtTime(0.35, t0+0.02); 
+    g2.gain.exponentialRampToValueAtTime(0.0001, t0+0.55); 
+    o2.frequency.setValueAtTime(660, t0);  
+    o2.frequency.exponentialRampToValueAtTime(990, t0+0.06);
+    
+    const nDur=0.09; 
+    const b = ctx.createBuffer(1, ctx.sampleRate*nDur, ctx.sampleRate); 
+    const d=b.getChannelData(0); 
+    for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+    
+    const n = ctx.createBufferSource(); 
+    n.buffer=b; 
+    const ng=ctx.createGain(); 
+    ng.gain.setValueAtTime(0.4, t0); 
+    ng.gain.exponentialRampToValueAtTime(0.0001, t0+nDur);
+    
+    o1.connect(g1).connect(ctx.destination); 
+    o2.connect(g2).connect(ctx.destination); 
+    n.connect(ng).connect(ctx.destination);
+    
+    o1.start(t0); 
+    o2.start(t0+0.02); 
+    n.start(t0); 
+    o1.stop(t0+0.7); 
+    o2.stop(t0+0.55); 
+    n.stop(t0+nDur);
+    
+    console.log('Playing cha-ching sound for gaple prize');
+  } catch (e) {
+    console.warn('Error playing cha-ching sound:', e);
+  }
+}
+
+// Cleanup suara saat halaman ditutup atau kehilangan focus
+window.addEventListener('beforeunload', () => {
+  stopBeepSound();
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    stopBeepSound();
+  }
+});
 </script>
 </body>
 </html>
