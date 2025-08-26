@@ -33,6 +33,11 @@
     .highlight{ background-image:linear-gradient(90deg,#ff00ff,#00ffff); color:#fff; font-weight:700 }
     .picked{ outline:4px solid #22d3ee; box-shadow:0 0 30px #22d3ee77 inset }
     .disabled{ pointer-events:none; opacity:.6 }
+    #btnSpin.disabled{ 
+      background:linear-gradient(to right, #6b7280, #9ca3af) !important;
+      cursor:not-allowed !important;
+      transform:none !important;
+    }
     .twirl{ transform:rotateY(180deg) scale(.96) }
     .header-full{left:0;right:0;top:0;width:100% !important;}
   </style>
@@ -53,7 +58,7 @@
 
   <div class="mystery-root">
     <main class="w-full flex flex-col items-center pt-8 pb-28">
-      <h1 class="text-4xl md:text-6xl font-extrabold rainbow-neon tracking-widest uppercase drop-shadow-lg mb-6 text-center">MYSTERY BOX</h1>
+      <h1 class="text-4xl md:text-6xl font-extrabold rainbow-neon tracking-widest uppercase drop-shadow-lg mb-6 text-center"> MYSTERY BOX </h1>
 
       <div id="gridBoxes" class="grid grid-cols-3 gap-6 mb-8">
         <button class="box-glow w-20 h-20 md:w-28 md:h-28 flex items-center justify-center"><span class="text-4xl md:text-5xl">🎁</span></button>
@@ -186,7 +191,7 @@
 
     // Shuffle grid
     const grid = document.getElementById('gridBoxes');
-    let spinning=false, chosen=false;
+    let spinning=false, chosen=false, hasSpun=false;
 
     // Saat load, semua box harus disabled
     function setBoxesDisabled(disabled=true) {
@@ -231,14 +236,19 @@
 
     const btnSpin=document.getElementById('btnSpin');
     function startSpinBoxes(){
-      if(spinning) return;
-      spinning=true; chosen=false;
+      if(spinning || hasSpun) return; // Cegah spin jika sudah pernah spin
+      spinning=true; chosen=false; hasSpun=true; // Set flag hasSpun ke true
       Array.from(grid.children).forEach(b=>{
         b.classList.remove('picked','disabled');
         b.style.pointerEvents='none';
         b.querySelector('span').textContent='🎁';
       });
       setBoxesDisabled(true);
+      
+      // Disable tombol spin dan ubah tampilannya
+      btnSpin.disabled = true;
+      btnSpin.classList.add('disabled');
+      
       const endAt=Date.now()+3000;
       (function step(){
         if(Date.now()>endAt){
@@ -282,8 +292,10 @@
     // Disable semua tombol dan grid setelah hadiah dicatat
     function disableGame() {
       setBoxesDisabled(true);
+      hasSpun = true; // Set flag hasSpun untuk mencegah spin ulang
       btnSpin.disabled = true;
       btnSpin.classList.add('disabled');
+      btnSpin.textContent = '🚫 SUDAH DIGUNAKAN';
     }
     function closeModal(){
       const m=document.getElementById('modalPrize');
@@ -322,7 +334,7 @@
           console.log('Response API:', data);
           if (data.success) {
             openModalWithPrize(Number(data.hadiah));
-            resultText.textContent = `Selamat ${s.userId}🎉 Bosku mendapatkan ${formatRupiah(Number(data.hadiah))}. Claim segera💰.`;
+            resultText.textContent = `Selamat ${s.userId}🎉 Bosku mendapatkan ${formatRupiah(Number(data.hadiah))}. Claim segera.`;
             disableGame();
             setClaimed(s.kupon);
           } else {
