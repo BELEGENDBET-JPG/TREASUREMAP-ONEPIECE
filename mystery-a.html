@@ -322,7 +322,7 @@
           console.log('Response API:', data);
           if (data.success) {
             openModalWithPrize(Number(data.hadiah));
-            resultText.textContent = `Selamat ${s.userId}! Kamu mendapatkan ${formatRupiah(Number(data.hadiah))}. Hadiah sudah dicatat.`;
+            resultText.textContent = `Selamat ${s.userId}🎉 Bosku mendapatkan ${formatRupiah(Number(data.hadiah))}. Claim segera💰.`;
             disableGame();
             setClaimed(s.kupon);
           } else {
