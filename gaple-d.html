@@ -119,6 +119,12 @@ body{
 .btn::before{content:""; position:absolute; inset:0; border-radius:14px; box-shadow:inset 0 0 0 2px rgba(255,215,0,.28); mix-blend:overlay; opacity:.95; pointer-events:none}
 .btn:hover{transform:translateY(-1px); box-shadow:var(--glow-a)}
 .btn.primary:hover{box-shadow:var(--glow-a), var(--glow-b)}
+#btnStart.disabled, #btnStart:disabled{ 
+  background:linear-gradient(to right, #6b7280, #9ca3af) !important;
+  cursor:not-allowed !important;
+  transform:none !important;
+  pointer-events:none !important;
+}
 
 /* Kanan: daftar hadiah & result */
 .prize-section{padding:10px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
@@ -344,7 +350,7 @@ const claimWA = document.getElementById('claimWA');
 const claimTG = document.getElementById('claimTG');
 const footnote = document.getElementById('footnote');
 
-let canPick = false, busy = false, picked = false;
+let canPick = false, busy = false, picked = false, hasSpun = false;
 let chosen=null;
 
 /* ====== SESSION COOKIE LOCK (reset kalau browser ditutup) ====== */
@@ -521,16 +527,21 @@ function isPlayed(){ return Locker.has(getPlayKey()); }
 function lockIfPlayed(){
   const s = JSON.parse(localStorage.getItem('tm_session')||'null');
   function isClaimed(kupon) { if (!kupon) return false; return localStorage.getItem('tm_claimed_'+kupon) === '1'; }
-  if(isPlayed() || isClaimed(s?.kupon)){
+  if(isPlayed() || isClaimed(s?.kupon) || hasSpun){
     btnStart.disabled = true;
-    btnStart.textContent = 'SUDAH MAIN';
+    btnStart.textContent = '🚫 SUDAH DIGUNAKAN';
     btnStart.style.filter = 'grayscale(0.7) brightness(0.9)';
+    btnStart.style.background = 'linear-gradient(to right, #6b7280, #9ca3af)';
+    btnStart.style.cursor = 'not-allowed';
     hint.textContent = 'CLAIM SCROOL KEBEWAH BOSKU 👇';
+    hasSpun = true; // Set flag hasSpun
     return true;
   }
   btnStart.disabled = false;
   btnStart.textContent = 'PUTAR GO GAPLE';
   btnStart.style.filter = '';
+  btnStart.style.background = '';
+  btnStart.style.cursor = '';
   hint.textContent = '💡SPIN PUTAR GO GAPLE';
   return false;
 }
@@ -538,15 +549,21 @@ function setPlayedOnce(){ Locker.set(getPlayKey()); }
 
 /* ===== START BUTTON ===== */
 const btnStartHandler = ()=>{
-  if(busy) return;
+  if(busy || hasSpun) return; // Cegah jika sudah pernah spin
   if(isPlayed()) { lockIfPlayed(); return; }
 
   picked = false;
   resultBox.classList.remove('show');
   clearHighlights();
 
-  canPick = false; busy = true;
+  canPick = false; busy = true; hasSpun = true; // Set flag hasSpun ke true
   btnStart.disabled=true;
+  
+  // Disable tombol dan ubah tampilannya
+  btnStart.textContent = '⚡ MEMUTAR...';
+  btnStart.style.background = 'linear-gradient(to right, #6b7280, #9ca3af)';
+  btnStart.style.cursor = 'not-allowed';
+  
   hint.textContent='Mengacak kartu...';
   makeShuffle();
 
@@ -557,6 +574,8 @@ const btnStartHandler = ()=>{
     setTimeout(()=>{
       resultMsg.innerHTML = 'Session tidak valid. Silakan login ulang.';
       resultBox.classList.add('show');
+      hasSpun = true; // Set flag hasSpun
+      lockIfPlayed();
       busy = false;
       btnStart.disabled = false;
     }, 800);
@@ -566,6 +585,7 @@ const btnStartHandler = ()=>{
     setTimeout(()=>{
       resultMsg.innerHTML = 'Kupon sudah pernah dipakai⛔';
       resultBox.classList.add('show');
+      hasSpun = true; // Set flag hasSpun
       lockIfPlayed();
       busy = false;
       btnStart.disabled = false;
@@ -598,16 +618,21 @@ const btnStartHandler = ()=>{
         for (let i = 0; i < DECK.length; i++) { const t = DECK[i]; if (getPrizeForCard(t) === hadiahNum) { matchIdx = i; match = t; break; } }
         if (matchIdx !== -1) { forcedPrizeIdx = matchIdx; forcedPrizeObj = match; } else { forcedPrizeIdx = -1; forcedPrizeObj = null; }
         setClaimed(s.kupon);
+        hasSpun = true; // Pastikan flag hasSpun diset
         lockIfPlayed();
       } else {
         forcedPrizeIdx = -1; forcedPrizeObj = null;
         resultMsg.innerHTML = data.msg || 'Gagal mencatat hadiah!';
         resultBox.classList.add('show');
+        hasSpun = true; // Set flag hasSpun walaupun gagal
         lockIfPlayed();
       }
       setTimeout(()=>{
         showGrid();
-        btnStart.disabled=false;
+        // Jangan enable tombol lagi jika sudah spin
+        if (!hasSpun) {
+          btnStart.disabled=false;
+        }
         canPick = true;
         busy = false;
         if (forcedPrizeIdx !== -1) hint.textContent = 'PILIH 1 GAPLE DAPATKAN HADIAH🕊️'; else hint.textContent = 'PILIH 1 GAPLE';
@@ -618,6 +643,7 @@ const btnStartHandler = ()=>{
       setTimeout(()=>{
         resultMsg.innerHTML = 'Gagal menghubungi server. Coba lagi.';
         resultBox.classList.add('show');
+        hasSpun = true; // Set flag hasSpun saat error
         lockIfPlayed();
         busy = false;
         btnStart.disabled = false;
@@ -635,6 +661,7 @@ btnStart.addEventListener('click', btnStartHandler, {passive:true});
   function setClaimed(kupon) { if (!kupon) return; localStorage.setItem('tm_claimed_'+kupon, '1'); }
   function isClaimed(kupon) { if (!kupon) return false; return localStorage.getItem('tm_claimed_'+kupon) === '1'; }
   if (isClaimed(s?.kupon)) {
+    hasSpun = true; // Set flag hasSpun
     lockIfPlayed();
     resultMsg.innerHTML = 'Kupon sudah pernah dipakai⛔';
     resultBox.classList.add('show');
@@ -644,6 +671,7 @@ btnStart.addEventListener('click', btnStartHandler, {passive:true});
       .then(res=>res.json())
       .then(data=>{
         if (data.msg && data.msg.toLowerCase().includes('terpakai')) {
+          hasSpun = true; // Set flag hasSpun
           lockIfPlayed();
           resultMsg.innerHTML = 'Kupon sudah pernah dipakai⛔';
           resultBox.classList.add('show');
