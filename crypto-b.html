@@ -730,7 +730,7 @@ function finishSpin(sym, idx){
         markWin(idxServer); flashPicker();
         mTitle.textContent = 'TRADE SUCCESS!';
         mMsg.textContent = `Profit ${formatIDR(hadiahNum)} dari ${symbols[idxServer].name}`;
-        showToast('SUKSES', `Hadiah ${formatIDR(hadiahNum)} (${symbols[idxServer].name}) Selamat Bosku`);
+        showToast('SUKSES', `Hadiah ${formatIDR(hadiahNum)} (${symbols[idxServer].name}) Selamat Bosku 🎉`);
         setClaimed(s.kupon);
         disableGame();
       } else {
