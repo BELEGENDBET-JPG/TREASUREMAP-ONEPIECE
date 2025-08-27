@@ -2,11 +2,63 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <!-- OPTIMASI PERFORMA ANDROID -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
   <title>Treasure Map — Mystery Box (Pulau A)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+    
+    /* OPTIMASI PERFORMA ANDROID */
+    *{
+      -webkit-tap-highlight-color:transparent;
+      -webkit-touch-callout:none;
+      -webkit-user-select:none;
+      -moz-user-select:none;
+      -ms-user-select:none;
+      user-select:none;
+      box-sizing:border-box;
+    }
+    
+    html,body{
+      -webkit-text-size-adjust:100%;
+      -ms-text-size-adjust:100%;
+      text-size-adjust:100%;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      font-display:swap;
+      overscroll-behavior:none;
+    }
+    
+    /* HARDWARE ACCELERATION */
+    .mystery-box, .box-glow, button {
+      transform:translateZ(0);
+      -webkit-transform:translateZ(0);
+      will-change:transform;
+      -webkit-backface-visibility:hidden;
+      backface-visibility:hidden;
+    }
+    
+    /* OPTIMASI TOUCH */
+    button, .mystery-box {
+      touch-action:manipulation;
+      cursor:pointer;
+    }
+    
+    /* DISABLE HOVER ON TOUCH */
+    @media (hover: none) and (pointer: coarse) {
+      button:hover, .mystery-box:hover {
+        transform:none !important;
+        filter:none !important;
+      }
+    }
+    
     body{ font-family:'Inter',sans-serif; background:#121212; color:#fff }
     .mystery-root{
       position:relative; min-height:calc(100vh - 66px - 64px); padding-bottom:24px;
@@ -114,6 +166,42 @@
   </footer>
 
   <script>
+    /* ==== OPTIMASI PERFORMA ANDROID SUPER NGEBUT ==== */
+    // Disable console di production untuk speed
+    if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+      console.log = console.warn = console.error = () => {};
+    }
+
+    // Fast event delegation untuk touch events
+    const addTouchOptimized = (element, handler) => {
+      if (element) {
+        element.addEventListener('touchstart', handler, { passive: true });
+        element.addEventListener('click', handler, { passive: true });
+      }
+    };
+
+    // Memory-efficient animation queue
+    const animQueue = [];
+    let animRunning = false;
+    const runAnimations = () => {
+      if (animQueue.length === 0) {
+        animRunning = false;
+        return;
+      }
+      animRunning = true;
+      requestAnimationFrame(() => {
+        const batch = animQueue.splice(0, 5); // Process 5 at a time
+        batch.forEach(fn => fn());
+        runAnimations();
+      });
+    };
+    
+    const queueAnimation = (fn) => {
+      animQueue.push(fn);
+      if (!animRunning) runAnimations();
+    };
+
+    /* ==== ORIGINAL SCRIPT START ==== */
   (function(){
     // Data session dipakai cuma di teks hasil (modal)
     function loadSession(){ try{ return JSON.parse(localStorage.getItem('tm_session')||'null'); }catch{ return null } }
