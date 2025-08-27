@@ -243,6 +243,39 @@
       box-sizing:border-box;
     }
     .modal-card::before{ content:""; position:absolute; inset:-2px; border-radius:inherit; padding:2px; background:linear-gradient(90deg,#27b0ff,#ff2ea6,#ffc94a,#39ff7f); -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; opacity:.9; filter:blur(.5px); pointer-events:none; }
+    
+    /* TOMBOL X TUTUP MODAL */
+    .modal-close {
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff4757, #c44569);
+      border: 2px solid rgba(255,255,255,.2);
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 20px rgba(255,71,87,.4), 0 0 12px rgba(255,71,87,.2);
+      transition: all .2s ease;
+      z-index: 10;
+      line-height: 1;
+    }
+    
+    .modal-close:hover {
+      transform: scale(1.1);
+      background: linear-gradient(135deg, #ff3838, #b33a5a);
+      box-shadow: 0 8px 25px rgba(255,71,87,.6), 0 0 18px rgba(255,71,87,.4);
+    }
+    
+    .modal-close:active {
+      transform: scale(0.95);
+    }
     .modal h2{ font-family:Orbitron,Inter,sans-serif; font-size: clamp(20px, 5vw, 48px); margin:8px 0 6px; }
     .modal .actions{ display:flex; gap: clamp(8px, 2vw, 12px); justify-content:center; margin-top: clamp(12px, 3vw, 16px); flex-wrap:wrap; padding: 0 clamp(8px, 2vw, 12px); }
 
@@ -411,6 +444,9 @@
   <!-- Modal -->
   <div id="winModal" class="modal" aria-hidden="true" role="dialog" aria-label="Hadiah">
     <div class="modal-card">
+      <!-- TOMBOL X TUTUP -->
+      <button id="btnCloseModal" class="modal-close" aria-label="Tutup Modal">✕</button>
+      
       <div class="eyebrow">Selamat!</div>
       <h2 id="modalTitle">Anda Mendapat Hadiah</h2>
       <div class="prize-list-container">
@@ -476,6 +512,7 @@
     const claimBtn = document.getElementById('claimBtn');
     const joinTgBtn = document.getElementById('joinTgBtn');
     const playAgainBtn = document.getElementById('playAgainBtn');
+    const btnCloseModal = document.getElementById('btnCloseModal');
     const DOOR_COUNT = doors.length;
 
     let selectEnabled = false, spinActive = false, gameLocked = false;
@@ -779,6 +816,32 @@
       const n = ctx.createBufferSource(); n.buffer=b; const ng=ctx.createGain(); ng.gain.setValueAtTime(0.4, t0); ng.gain.exponentialRampToValueAtTime(0.0001, t0+nDur);
       o1.connect(g1).connect(ctx.destination); o2.connect(g2).connect(ctx.destination); n.connect(ng).connect(ctx.destination);
       o1.start(t0); o2.start(t0+0.02); n.start(t0); o1.stop(t0+0.7); o2.stop(t0+0.55); n.stop(t0+nDur);
+    }
+
+    /* === MODAL CLOSE FUNCTION === */
+    function closeModal() {
+      if (modal) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    }
+
+    /* === EVENT LISTENERS UNTUK MODAL === */
+    if (btnCloseModal) {
+      optimizedTouch(btnCloseModal, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeModal();
+      });
+    }
+
+    // Click background modal untuk tutup
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModal();
+        }
+      }, {signal: __CTRL.signal});
     }
 
     window.addEventListener('beforeunload', () => { stopTractorSound(); }, {signal: __CTRL.signal});
