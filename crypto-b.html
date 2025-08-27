@@ -2,7 +2,14 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover" />
+<!-- OPTIMASI PERFORMA ANDROID -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="format-detection" content="telephone=no">
+<meta name="msapplication-tap-highlight" content="no">
 <title>Neon Crypto Event — Spin & Prize (v15.3 FAST)</title>
 
 <!-- Tailwind -->
@@ -29,8 +36,58 @@
 <link rel="preload" as="image" href="https://i.postimg.cc/13D3q11L/dot.webp" crossorigin="anonymous">
 
 <style>
-/* ====== GLOBAL ====== */
-*{ box-sizing:border-box }
+/* ====== GLOBAL + OPTIMASI ANDROID ====== */
+*{ 
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+}
+
+:root{
+  --muted:#94a3b8; --txt:#e2e8f0; --p:#38bdf8; --s:#a855f7; --g:#10b981; --r:#ef4444;
+  --card:rgba(16,22,42,.7);
+  --ring: conic-gradient(from 0deg, #ff0044, #ff7f00 16%, #ffee00 32%, #00ff87 48%, #00b3ff 64%, #7b2cff 80%, #ff00d4 96%, #ff0044);
+  --slotInset:16px; --hdr-h:46px; --subftr-h:32px;
+  --top-gap: clamp(18px, 3.5vh, 44px);
+}
+
+html, body{ 
+  height:100%;
+  -webkit-text-size-adjust:100%;
+  -ms-text-size-adjust:100%;
+  text-size-adjust:100%;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  font-display:swap;
+  overscroll-behavior:none;
+}
+
+/* HARDWARE ACCELERATION */
+.slotMachine, .slotRoll, .symbol, button, .cta {
+  transform:translateZ(0);
+  -webkit-transform:translateZ(0);
+  will-change:transform;
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
+}
+
+/* OPTIMASI TOUCH */
+button, .cta, .lever {
+  touch-action:manipulation;
+  cursor:pointer;
+}
+
+/* DISABLE HOVER ON TOUCH */
+@media (hover: none) and (pointer: coarse) {
+  button:hover, .cta:hover, .homeBtn:hover {
+    transform:none !important;
+    filter:none !important;
+  }
+}
 :root{
   --muted:#94a3b8; --txt:#e2e8f0; --p:#38bdf8; --s:#a855f7; --g:#10b981; --r:#ef4444;
   --card:rgba(16,22,42,.7);
@@ -420,6 +477,55 @@ body{
   </div>
 
 <script>
+/* ==== OPTIMASI PERFORMA ANDROID SUPER NGEBUT ==== */
+// Disable console di production untuk speed
+if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+  console.log = console.warn = console.error = () => {};
+}
+
+// Pool object untuk mengurangi garbage collection
+const objectPool = {
+  animations: [],
+  elements: [],
+  rent: function(type) {
+    const pool = this[type] || [];
+    return pool.pop() || {};
+  },
+  return: function(type, obj) {
+    const pool = this[type] || [];
+    if (pool.length < 50) pool.push(obj);
+  }
+};
+
+// Optimize RAF dengan batch processing
+let rafScheduled = false;
+const rafQueue = [];
+const optimizedRAF = (fn) => {
+  rafQueue.push(fn);
+  if (!rafScheduled) {
+    rafScheduled = true;
+    requestAnimationFrame(() => {
+      rafScheduled = false;
+      const queue = rafQueue.splice(0);
+      queue.forEach(fn => fn());
+    });
+  }
+};
+
+// Fast DOM cache dengan WeakMap
+const domCache = new WeakMap();
+const fastQuery = (selector, context = document) => {
+  if (!domCache.has(context)) {
+    domCache.set(context, new Map());
+  }
+  const cache = domCache.get(context);
+  if (!cache.has(selector)) {
+    cache.set(selector, context.querySelector(selector));
+  }
+  return cache.get(selector);
+};
+
+/* ==== ORIGINAL SCRIPT START ==== */
 /* ======= JS ASLI (tidak diubah) ======= */
 // ===== Helpers =====
 const qs = (id)=>document.getElementById(id);
