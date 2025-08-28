@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tentang Kami — Video Cara Bermain & 4 Gambar (Lite)</title>
+  <meta name="description" content="Halaman Tentang Kami dengan video cara bermain yang bisa diganti link/upload, plus 4 gambar penjelasan." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* ========================
+       TENTANG KAMI — LITE NEON
+       ========================
+       Catatan cepat BOS JHM:
+       - Video diputar otomatis dan berulang dari file yang diunggah.
+       - Kontrol ganti video (link/upload) sudah dihapus.
+       - Desain fokus performa (tanpa font eksternal), mobile-first, glow halus.
+    */
+
+    :root {
+      --bg: #0b0b14;
+      --panel: #141428;
+      --ink: #eaeaf3;
+      --muted: #b7b7c8;
+      --accent: #39ff88;  /* neon green */
+      --accent-2: #b4ff1f; /* lime neon */
+      --success: #2bd67b;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+      --maxw: 1100px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--ink);
+      background: #005000;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 20px; }
+
+    header.site {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: saturate(1.4) blur(8px);
+      background: linear-gradient(180deg, rgba(11,11,20,.85), rgba(11,11,20,.55));
+      border-bottom: 1px solid rgba(57,255,136,.28);
+    }
+    .site-inner { display: flex; align-items: center; gap: 14px; padding: 14px 20px; max-width: var(--maxw); margin: 0 auto; }
+    .logo {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: conic-gradient(from 220deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 24px rgba(57,255,136,.4);
+    }
+    .brand h1 { font-size: 18px; margin: 0; letter-spacing: .5px; }
+    .brand small { color: var(--muted); }
+
+    .hero {
+      display: grid; gap: 16px; padding: 24px 0 12px;
+    }
+    .hero h2 { font-size: clamp(24px, 3.6vw, 36px); margin: 6px 0 8px; }
+    .hero p { color: var(--muted); max-width: 70ch; }
+
+    /* VIDEO + STEPS */
+    .video-steps { display: grid; gap: 18px; grid-template-columns: 1fr; }
+    @media (min-width: 900px) {
+      .video-steps { grid-template-columns: 1.3fr .9fr; align-items: start; }
+    }
+    .card { background: linear-gradient(180deg, rgba(20,20,40,.75), rgba(20,20,40,.55)); border: 1px solid rgba(57,255,136,.28); border-radius: var(--radius); box-shadow: var(--shadow); }
+
+    .video-card { padding: 14px; }
+    .video-wrap { position: relative; border-radius: 14px; overflow: hidden; background: #000; box-shadow: 0 0 22px rgba(57,255,136,.25); }
+    .video-wrap::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 0 1px rgba(57,255,136,.28); border-radius: 14px; }
+    .video-wrap .player { width: 100%; aspect-ratio: 16/9; display: block; }
+
+    .steps { padding: 14px; }
+    .steps h3 { margin: 6px 6px 10px; font-size: 18px; }
+    .step-list { display: grid; gap: 10px; }
+    .step {
+      display: grid; grid-template-columns: 36px 1fr; gap: 12px; align-items: start; padding: 10px; border: 1px solid rgba(57,255,136,.28); border-radius: 12px; background: linear-gradient(180deg, rgba(22,22,44,.5), rgba(22,22,44,.2));
+    }
+    .step .num { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; font-weight: 800; background: linear-gradient(180deg, var(--accent), var(--accent-2)); color: #081016; box-shadow: 0 6px 18px rgba(57,255,136,.35); }
+    .step p { margin: 4px 0 0; color: var(--muted); }
+
+    /* GRID 4 GAMBAR */
+    .gallery { margin-top: 16px; display: grid; gap: 12px; grid-template-columns: 1fr; }
+    @media (min-width: 480px) { .gallery { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 768px) { .gallery { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1024px) { .gallery { grid-template-columns: 1fr 1fr; } }
+    
+    .tile { 
+      position: relative; 
+      overflow: hidden; 
+      border-radius: 14px; 
+      border: 1px solid rgba(57,255,136,.28); 
+      background: #0f0f1f; 
+      width: 100%;
+      height: auto;
+      min-height: 200px;
+    }
+    
+    .tile img { 
+      width: 100%; 
+      height: 100%; 
+      max-height: 300px;
+      display: block; 
+      object-fit: contain; 
+      object-position: center;
+      filter: contrast(1.02) saturate(1.05); 
+      transition: transform .4s ease;
+      background: #0f0f1f;
+    }
+    
+    .tile:hover img { transform: scale(1.02); }
+    .tile .badge { position: absolute; top: 10px; left: 10px; background: linear-gradient(180deg, var(--accent), var(--accent-2)); color: #081016; font-weight: 800; font-size: 13px; padding: 6px 10px; border-radius: 999px; box-shadow: 0 6px 18px rgba(57,255,136,.35); z-index: 2; }
+    .tile figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px; background: linear-gradient(180deg, transparent, rgba(10,10,20,.95)); color: var(--ink); font-size: 14px; z-index: 2; }
+
+    /* RESPONSIVE BREAKPOINTS UNTUK GAMBAR */
+    @media (max-width: 479px) {
+      .tile { min-height: 180px; }
+      .tile img { max-height: 220px; }
+      .tile figcaption { font-size: 12px; padding: 8px; }
+      .tile .badge { font-size: 11px; padding: 4px 8px; }
+    }
+    
+    @media (min-width: 480px) and (max-width: 767px) {
+      .tile { min-height: 160px; }
+      .tile img { max-height: 200px; }
+    }
+    
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .tile { min-height: 180px; }
+      .tile img { max-height: 240px; }
+    }
+    
+    @media (min-width: 1024px) {
+      .tile { min-height: 200px; }
+      .tile img { max-height: 280px; }
+    }
+
+    /* FAQ / INFO TAMBAHAN */
+    .accordion { margin-top: 18px; display: grid; gap: 10px; }
+    details { border: 1px solid rgba(57,255,136,.28); border-radius: 12px; padding: 10px 12px; background: linear-gradient(180deg, rgba(22,22,44,.5), rgba(22,22,44,.2)); }
+    summary { cursor: pointer; font-weight: 700; }
+    details p { color: var(--muted); margin: 8px 0 0; }
+
+    /* TOMBOL AUDIO */
+    #playButton:hover {
+      background: rgba(57,255,136,1) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(57,255,136,.4);
+    }
+
+    /* TOMBOL GAMBAR PENJELASAN */
+    .gallery-toggle {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      margin-top: 20px;
+      text-align: center;
+      background: rgba(57,255,136,0.9);
+      color: #000;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    
+    .gallery-toggle:hover {
+      background: rgba(57,255,136,1) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(57,255,136,.4);
+    }
+    
+    .gallery-toggle .arrow {
+      font-size: 14px;
+      transition: transform 0.3s ease;
+    }
+    
+    .gallery-toggle.active .arrow {
+      transform: rotate(180deg);
+    }
+    
+    .gallery {
+      margin-top: 16px;
+      display: none;
+      gap: 12px;
+      grid-template-columns: 1fr;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.4s ease;
+    }
+    
+    .gallery.show {
+      display: grid;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    footer { color: var(--muted); font-size: 13px; padding: 36px 0; text-align: center; }
+
+    /* ================= LAYOUT FIXES ================= */
+    body.flex.flex-col.min-h-screen {
+      min-height: 100vh;
+      height: auto;
+    }
+    
+    main.flex-grow {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .wrap {
+      flex: 1;
+    }
+
+    /* ================= HEADER SAMA SEPERTI INDEX ================= */
+    .header-full{left:0;right:0;top:0;width:100%}
+  </style>
+</head>
+<body class="flex flex-col min-h-screen overflow-x-hidden" style="overflow-y:auto;">
+  
+  <!-- HEADER SAMA SEPERTI INDEX -->
+  <header class="header-full fixed z-50 p-0 m-0">
+    <nav class="w-full bg-gradient-to-r from-slate-900 via-indigo-900 to-purple-900 shadow-md">
+      <div class="w-full flex items-center justify-between gap-3 px-3 sm:px-6 py-2">
+        <a href="#" class="text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">BELEGENDBET</a>
+        <button id="btnHome" onclick="window.location.href='index.html'" class="hover:text-white px-4 py-1.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg font-semibold shadow-lg transition text-sm">Beranda</button>
+      </div>
+    </nav>
+  </header>
+  <div class="h-12"></div>
+
+  <!-- HEADER LAMA (DIHAPUS) -->
+  <div style="display: none;">
+    <header class="site">
+      <div class="site-inner">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="brand">
+          <h1>Belegend — Tentang Kami</h1>
+          <small>Ringan, rapi, siap ganti konten kapan saja.</small>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <main class="wrap flex-grow">
+    <!-- HERO -->
+    <section class="hero">
+      <h2>TREASURE MAP ONEPIECE 😎🚩</h2>
+      <p>BELEGENDBET fokus memberikan event hadiah terbaik, REBUT HARTANYA 🏴‍☠️ Petualangan Tanpa Modal Dimulai Di Sini,Tanpa Drama ⚔️ Treasure Map OnePiece Siap jadi Raja Petualangan Baru 🚀 bikin kamu bisa main dengan lancar dan paham dalam 1 menit! Di bawah ini ada panduan lengkapnya 🎯 </p>
+    </section>
+
+    <!-- VIDEO + STEPS: di desktop video kiri, langkah kanan; di HP jadi stack -->
+    <section class="video-steps">
+      <div class="card video-card">
+        <div id="playerWrap" class="video-wrap">
+          <!-- Video bergantian otomatis dengan suara -->
+          <video id="player" class="player" controls autoplay muted playsinline preload="metadata" poster="" aria-label="Video cara bermain">
+            <source id="playerSource" src="treasure map onepiece.mp4" type="video/mp4" />
+            Browser Anda tidak mendukung video HTML5.
+          </video>
+        </div>
+        <!-- Tombol untuk unmute dan start di bawah video -->
+        <div id="playButton" style="margin-top: 12px; text-align: center; background: rgba(57,255,136,0.9); color: #000; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; display: none; transition: all 0.3s ease;">
+          🔊 Klik untuk Suara & Autoplay
+        </div>
+      </div>
+
+      <aside class="card steps">
+        <h3>Cepat Paham: 4 Langkah</h3>
+        <div class="step-list">
+          <div class="step">
+            <div class="num">1</div>
+            <div>
+              <strong>Buka login & Masukan kupon</strong>
+              <p>Masuk pakai ID kamu. Masukan token kupon yang di berikan Admin.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="num">2</div>
+            <div>
+              <strong>Putar kartu pulau</strong>
+              <p>Aturan ringkas spin putar pulau dan pilih 1 kartu pulau untuk mendapatkan hadiah  dari pulau tersebut.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="num">3</div>
+            <div>
+              <strong>Mode hadiah pulau</strong>
+              <p>Spin setiap pulau yang di dapat dan pilih 1 hadiah yang di inginkan, tunggu beberapa detik sampai muncul daftar hadiah yang didapat lalu sreenshotkan dan klik tombol claim wa dan claim telegram.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="num">4</div>
+            <div>
+              <strong>Nikmati 24jam Treasure Map Onepiece</strong>
+              <p>event 2x harian bisa tanpa deposit sekali dan dengan deposit minim Rp.25000 QRIS biar peluang hadiah makin besar.</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- GRID 4 GAMBAR PENJELASAN -->
+    <section aria-labelledby="galeriJudul">
+      <div class="gallery-toggle" id="galleryToggle">
+        <span>📸 Gambar Penjelasan</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="gallery" id="galleryGrid" role="list">
+        <!-- Ganti src masing-masing gambar sesuai kebutuhan -->
+        <figure class="tile" role="listitem">
+          <span class="badge">Pulau Emerald Bay</span>
+          <img loading="lazy" decoding="async" src="https://i.postimg.cc/pV70wxKw/PULAU-EMERALD-BAY.webp" alt="Contoh langkah 1" />
+          <figcaption>Spin execute trade,tunggu hadiah putaran koin dan claim wa/claim telegram.</figcaption>
+        </figure>
+        <figure class="tile" role="listitem">
+          <span class="badge">Pulau Celestial Atoll</span>
+          <img loading="lazy" decoding="async" src="https://i.postimg.cc/NjRRPvxk/PULAU-CELESTIAL-ATOLL.webp" alt="Contoh langkah 2" />
+          <figcaption>Spin box, tunggu putaran box dan pilih 1 hadiah box lalu claim wa/claim telegram.</figcaption>
+        </figure>
+        <figure class="tile" role="listitem">
+          <span class="badge">pulau azure Lagoon</span>
+          <img loading="lazy" decoding="async" src="https://i.postimg.cc/NfjHkryY/PULAU-AZURE-LAGOON.webp" alt="Contoh langkah 3" />
+          <figcaption>Putar go gaple, tunggu putaran gaple dan pilih 1 hadiah gaple lalu claim wa/claim telegram.</figcaption>
+        </figure>
+        <figure class="tile" role="listitem">
+          <span class="badge">Pulau Skull Cove</span>
+          <img loading="lazy" decoding="async" src="https://i.postimg.cc/LsbCmMrg/PULAU-SKULL-COVE.webp" alt="Contoh langkah 4" />
+          <figcaption>Spin door prize, tunggu putaran pintu dan pilih 1 hadiah pintu lalu claim wa/claim telegram.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- INFO TAMBAHAN: FAQ/Tips -->
+    <section class="accordion" aria-label="Informasi tambahan">
+      <details>
+        <summary>FAQ — Pertanyaan umum</summary>
+        <p>Game nggak jalan? pastikan tidak reload setiap halaman. masukan kupon tanpa spasi, pastikan selalu menunggu setiap langkahnya tidak memberikan dabel klik dan pastikan selalu claim dengan SREENSHOT.</p>
+      </details>
+      <details>
+        <summary>Tips performa</summary>
+        <p>Gunakan selalu mode situs DESKTOP-ANDROID agar performa stabil</p>
+      </details>
+      <details>
+        <summary>Terdiri 4 pulau harta karun</summary>
+        <p>Gedorpintu hoki, Crypto trading, Mystery box, Go gaple.</p>
+      </details>
+      <details>
+        <summary>Kontak</summary>
+        <p>Butuh bantuan hubungi kami ? WA OFFICIAL BELEGENDBET LINK WA, https://klikblg.com/wa-blb </p>
+      </details>
+    </section>
+
+  </main>
+
+  <!-- FOOTER FULL WIDTH -->
+  <footer class="mt-auto py-3 text-center text-gray-400 text-sm border-t border-slate-700 bg-slate-900 z-50 relative w-full">
+    <p>&copy; <span id="y"></span> BELEGENDBET. Hak Cipta Dilindungi Undang-Undang.</p>
+  </footer>
+
+  <script>
+    // Tahun dinamis
+    document.getElementById('y').textContent = new Date().getFullYear();
+    
+    // Auto-rotate video dengan suara
+    const video = document.getElementById('player');
+    const videoSource = document.getElementById('playerSource');
+    const playButton = document.getElementById('playButton');
+    const videos = [
+      'treasure map onepiece.mp4',
+      'treasure map onepiece2.mp4'
+    ];
+    let currentVideoIndex = 0;
+    let isUserInteracted = false;
+    
+    // Function untuk ganti video
+    function switchVideo() {
+      currentVideoIndex = (currentVideoIndex + 1) % videos.length;
+      videoSource.src = videos[currentVideoIndex];
+      video.load();
+      
+      if (isUserInteracted) {
+        video.play();
+      }
+    }
+    
+    // Function untuk enable audio dan autoplay
+    function enableAudioAndAutoplay() {
+      isUserInteracted = true;
+      video.muted = false; // Nyalakan suara
+      video.play();
+      playButton.style.display = 'none';
+    }
+    
+    // Event listener ketika video selesai
+    video.addEventListener('ended', switchVideo);
+    
+    // Event listener untuk play button
+    playButton.addEventListener('click', enableAudioAndAutoplay);
+    
+    // Cek apakah autoplay berhasil
+    video.addEventListener('loadeddata', function() {
+      video.play().then(function() {
+        // Autoplay berhasil, tapi masih muted
+        // Tampilkan tombol untuk enable suara
+        if (video.muted) {
+          playButton.style.display = 'block';
+        }
+      }).catch(function(error) {
+        // Autoplay gagal total, tampilkan tombol
+        playButton.style.display = 'block';
+        console.log('Autoplay diblokir, menampilkan tombol manual');
+      });
+    });
+    
+    // Event listener untuk user interaction (klik di video)
+    video.addEventListener('click', function() {
+      if (!isUserInteracted) {
+        enableAudioAndAutoplay();
+      }
+    });
+    
+    // TOGGLE GAMBAR PENJELASAN
+    const galleryToggle = document.getElementById('galleryToggle');
+    const galleryGrid = document.getElementById('galleryGrid');
+    let isGalleryVisible = false;
+    
+    galleryToggle.addEventListener('click', function() {
+      isGalleryVisible = !isGalleryVisible;
+      
+      if (isGalleryVisible) {
+        // Show gallery
+        galleryGrid.classList.add('show');
+        galleryToggle.classList.add('active');
+        galleryToggle.querySelector('span:first-child').textContent = '📸 Sembunyikan Gambar';
+      } else {
+        // Hide gallery
+        galleryGrid.classList.remove('show');
+        galleryToggle.classList.remove('active');
+        galleryToggle.querySelector('span:first-child').textContent = '📸 Gambar Penjelasan';
+      }
+    });
+  </script>
+</body>
+</html>
