@@ -10,7 +10,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="format-detection" content="telephone=no">
 <meta name="msapplication-tap-highlight" content="no">
-<title>Neon Crypto Event — Spin & Prize (v15.3 FAST)</title>
+<title>Neon Crypto Event — Spin & Prize (v16.0 ANDROID OPTIMIZED)</title>
 
 <!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -36,7 +36,7 @@
 <link rel="preload" as="image" href="https://i.postimg.cc/13D3q11L/dot.webp" crossorigin="anonymous">
 
 <style>
-/* ====== GLOBAL + OPTIMASI ANDROID ====== */
+/* ====== GLOBAL + OPTIMASI ANDROID ULTRA ====== */
 *{ 
   box-sizing:border-box;
   -webkit-tap-highlight-color:transparent;
@@ -54,12 +54,12 @@
   --slotInset:16px; --hdr-h:46px; --subftr-h:32px;
   --top-gap: clamp(18px, 3.5vh, 44px);
   
-  /* MOBILE RESPONSIVE SIZING - ULTRA COMPACT */
-  --cell-size: clamp(70px, 14vw, 110px);
-  --cell-gap: clamp(0.3rem, 1vw, 0.5rem);
-  --cell-height: clamp(10rem, 20vw, 13rem);
-  --img-size: clamp(32px, 10vw, 70px);
-  --container-padding: clamp(0.4rem, 1.5vw, 1rem);
+  /* MOBILE RESPONSIVE SIZING - ULTRA COMPACT ANDROID OPTIMIZED */
+  --cell-size: clamp(65px, 12vw, 100px);
+  --cell-gap: clamp(0.2rem, 0.8vw, 0.4rem);
+  --cell-height: clamp(9rem, 18vw, 12rem);
+  --img-size: clamp(28px, 8vw, 60px);
+  --container-padding: clamp(0.3rem, 1.2vw, 0.8rem);
 }
 
 html, body{ 
@@ -71,28 +71,42 @@ html, body{
   -moz-osx-font-smoothing:grayscale;
   font-display:swap;
   overscroll-behavior:none;
+  -webkit-overflow-scrolling:touch;
 }
 
-/* HARDWARE ACCELERATION */
-.slotMachine, .slotRoll, .symbol, button, .cta {
+/* HARDWARE ACCELERATION - ANDROID OPTIMIZED */
+.slotMachine, .slotRoll, .symbol, button, .cta, .neon, .miniChart {
   transform:translateZ(0);
   -webkit-transform:translateZ(0);
   will-change:transform;
   -webkit-backface-visibility:hidden;
   backface-visibility:hidden;
+  contain:layout style paint;
 }
 
-/* OPTIMASI TOUCH */
+/* OPTIMASI TOUCH ANDROID */
 button, .cta, .lever {
   touch-action:manipulation;
   cursor:pointer;
+  -webkit-user-select:none;
+  -webkit-tap-highlight-color:rgba(0,0,0,0);
 }
 
-/* DISABLE HOVER ON TOUCH */
+/* DISABLE HOVER ON TOUCH - ANDROID PERFORMANCE */
 @media (hover: none) and (pointer: coarse) {
-  button:hover, .cta:hover, .homeBtn:hover {
+  button:hover, .cta:hover, .homeBtn:hover, .row:hover {
     transform:none !important;
     filter:none !important;
+    box-shadow:none !important;
+  }
+}
+
+/* REDUCE MOTION FOR LOW-END ANDROID */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 :root{
@@ -330,51 +344,55 @@ body{
   .spinning .vItem .logo{ animation:none !important }
 }
 
-/* Frame/ornamen slot */
+/* Frame/ornamen slot - ANDROID OPTIMIZED */
 .slotBox::before{
   content:""; position:absolute; inset:-1.5px; border-radius:inherit; padding:1.5px;
   background: conic-gradient(from 0deg, #22d3ee, #a78bfa, #22d3ee);
   -webkit-mask: linear-gradient(#0000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor; mask-composite: exclude;
-  animation: spin 10s linear infinite; opacity:.95; pointer-events:none
+  -webkit-mask-composite: xor; 
+  mask: linear-gradient(#0000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: spin 12s linear infinite; opacity:.8; pointer-events:none;
+  will-change: transform;
 }
 .slotBox::after{
   content:""; position:absolute; inset:0;
-  background: radial-gradient(60% 45% at 50% 35%, rgba(255,255,255,.32), rgba(255,255,255,.08) 60%, transparent 75%),
-              radial-gradient(70% 60% at 50% 120%, rgba(255,255,255,.25), rgba(255,255,255,.05));
-  pointer-events:none
+  background: radial-gradient(60% 45% at 50% 35%, rgba(255,255,255,.25), rgba(255,255,255,.05) 60%, transparent 75%);
+  pointer-events:none;
 }
-.slotBox .glare{ position:absolute; left:6%; right:6%; top:8%; height:68px; border-radius:999px;
-  background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.02)); filter: blur(10px); opacity:.45; pointer-events:none }
+.slotBox .glare{ position:absolute; left:6%; right:6%; top:8%; height:48px; border-radius:999px;
+  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.01)); 
+  filter: blur(6px); opacity:.35; pointer-events:none }
 .picker::before{
-  content:""; position:absolute; left:50%; top:50%; transform: translate(-50%, -50%) rotate(45deg); width:12px; height:12px; border-radius:2px;
-  background:#22d3ee; box-shadow: 0 0 18px rgba(34,211,238,.6)
+  content:""; position:absolute; left:50%; top:50%; transform: translate(-50%, -50%) rotate(45deg); 
+  width:10px; height:10px; border-radius:2px;
+  background:#22d3ee; box-shadow: 0 0 12px rgba(34,211,238,.5);
 }
 @keyframes spin{ to{ transform:rotate(360deg) } }
 
-/* WIN highlight + neon flash */
-.row.win{ border:1px solid rgba(255,72,108,.95);
-  box-shadow:0 0 0 3px rgba(255,72,108,.9) inset, 0 0 32px rgba(255,0,90,.75), 0 0 80px rgba(255,0,90,.5);
+/* WIN highlight + neon flash - PERFORMANCE OPTIMIZED */
+.row.win{ border:1px solid rgba(255,72,108,.9);
+  box-shadow:0 0 0 2px rgba(255,72,108,.8) inset, 0 0 20px rgba(255,0,90,.6);
   background:linear-gradient(180deg,#fff0f3,#ffe0e7) }
 .row.win .name, .row.win .amt{ color:#3b0a12; text-shadow:0 1px 0 rgba(255,255,255,.6) }
-.row.flash{ border-color:rgba(255,72,108,.98)!important;
-  box-shadow:0 0 0 3px rgba(255,72,108,1) inset, 0 0 36px rgba(255,0,90,.95), 0 0 90px rgba(255,0,90,.7), 0 0 140px rgba(255,0,90,.55);
-  animation:neonBlink 1.6s ease-in-out 1
+.row.flash{ border-color:rgba(255,72,108,.95)!important;
+  box-shadow:0 0 0 2px rgba(255,72,108,.95) inset, 0 0 24px rgba(255,0,90,.8);
+  animation:neonBlink 1.2s ease-in-out 1;
 }
 .row.flash::after{
-  content:""; position:absolute; inset:-2px; border-radius:inherit; pointer-events:none; mix-blend-mode:screen; filter:blur(6px);
-  background:radial-gradient(120% 120% at 50% 50%, rgba(255,0,90,.55), rgba(255,0,90,0) 60%);
-  animation:flashOverlay 1.6s ease-out 1
+  content:""; position:absolute; inset:-1px; border-radius:inherit; pointer-events:none; 
+  mix-blend-mode:screen; filter:blur(4px);
+  background:radial-gradient(100% 100% at 50% 50%, rgba(255,0,90,.4), rgba(255,0,90,0) 60%);
+  animation:flashOverlay 1.2s ease-out 1;
 }
 @keyframes neonBlink{
-  0%{ box-shadow:0 0 0 3px rgba(255,72,108,1) inset,0 0 52px rgba(255,0,90,1),0 0 120px rgba(255,0,90,.9),0 0 160px rgba(255,0,90,.7) }
-  18%{ box-shadow:0 0 0 3px rgba(255,72,108,.8) inset,0 0 18px rgba(255,0,90,.6),0 0 40px rgba(255,0,90,.4),0 0 80px rgba(255,0,90,.3) }
-  32%{ box-shadow:0 0 0 3px rgba(255,72,108,1) inset,0 0 50px rgba(255,0,90,.95),0 0 120px rgba(255,0,90,.8),0 0 160px rgba(255,0,90,.6) }
-  48%{ box-shadow:0 0 0 3px rgba(255,72,108,.75) inset,0 0 16px rgba(255,0,90,.5),0 0 36px rgba(255,0,90,.35),0 0 70px rgba(255,0,90,.25) }
-  70%{ box-shadow:0 0 0 3px rgba(255,72,108,1) inset,0 0 42px rgba(255,0,90,.9),0 0 100px rgba(255,0,90,.7),0 0 140px rgba(255,0,90,.55) }
-  100%{ box-shadow:0 0 0 3px rgba(255,72,108,.9) inset,0 0 28px rgba(255,0,90,.6),0 0 70px rgba(255,0,90,.4),0 0 110px rgba(255,0,90,.3) }
+  0%{ box-shadow:0 0 0 2px rgba(255,72,108,.95) inset,0 0 30px rgba(255,0,90,.8) }
+  25%{ box-shadow:0 0 0 2px rgba(255,72,108,.7) inset,0 0 15px rgba(255,0,90,.5) }
+  50%{ box-shadow:0 0 0 2px rgba(255,72,108,.95) inset,0 0 28px rgba(255,0,90,.75) }
+  75%{ box-shadow:0 0 0 2px rgba(255,72,108,.6) inset,0 0 12px rgba(255,0,90,.4) }
+  100%{ box-shadow:0 0 0 2px rgba(255,72,108,.8) inset,0 0 20px rgba(255,0,90,.6) }
 }
-@keyframes flashOverlay{ 0%{opacity:0} 10%{opacity:1} 25%{opacity:.25} 45%{opacity:.95} 100%{opacity:0} }
+@keyframes flashOverlay{ 0%{opacity:0} 15%{opacity:.8} 40%{opacity:.2} 70%{opacity:.6} 100%{opacity:0} }
 
 /* Toast, tombol, editor icon (tetap) */
 .toast{ position:fixed; right:clamp(16px,4vw,40px); bottom:clamp(16px,4vw,40px); z-index:70 }
@@ -735,12 +753,29 @@ if(lever){
     }
   });
 }
-addEventListener('resize', ()=>{ measureCell(); applyBaseTransform(); });
+// OPTIMIZED EVENT LISTENERS WITH DEBOUNCING
+let resizeDebounceTimeout;
+addEventListener('resize', ()=>{ 
+  clearTimeout(resizeDebounceTimeout);
+  resizeDebounceTimeout = setTimeout(() => {
+    measureCell(); 
+    applyBaseTransform(); 
+  }, 100);
+});
+
+// THROTTLED POINTER MOVE
+let pointerMoveTimeout;
 addEventListener('pointermove', (e)=>{
-  const x = e.clientX / innerWidth;
-  const y = e.clientY / innerHeight;
-  document.body.style.setProperty('--mx', Math.round(x*100)+'%');
-  document.body.style.setProperty('--my', Math.round(y*100)+'%');
+  if (pointerMoveTimeout) return;
+  pointerMoveTimeout = setTimeout(() => {
+    pointerMoveTimeout = null;
+    const x = e.clientX / innerWidth;
+    const y = e.clientY / innerHeight;
+    if(document.body.style.setProperty){
+      document.body.style.setProperty('--mx', Math.round(x*100)+'%');
+      document.body.style.setProperty('--my', Math.round(y*100)+'%');
+    }
+  }, 32); // 30fps throttle for better performance
 });
 
 // ===== Prize Board =====
@@ -753,8 +788,9 @@ function renderPrizeBoard(){
 
     const img=document.createElement('img');
     img.src=s.icon; img.alt=s.name;
-    img.loading='eager'; img.decoding='sync'; img.setAttribute('fetchpriority','high');
-    img.width=110; img.height=110;
+    img.loading='lazy'; img.decoding='async'; img.setAttribute('fetchpriority','low');
+    img.width=80; img.height=80;
+    img.style.maxWidth='100%'; img.style.height='auto';
 
     const name=document.createElement('div');
     name.className='name';
@@ -781,7 +817,7 @@ function markWin(i){
       el.classList.remove('flash');
       void el.offsetWidth;
       el.classList.add('flash');
-      setTimeout(()=> el.classList.remove('flash'), 1700);
+      setTimeout(()=> el.classList.remove('flash'), 1200);
     } else {
       el.classList.remove('flash');
     }
@@ -849,8 +885,9 @@ function buildColumn(order){
     const im = document.createElement('img');
     im.className='logo';
     im.src=s.icon; im.alt=s.name;
-    im.loading='eager'; im.decoding='sync'; im.setAttribute('fetchpriority','high');
-    im.width=140; im.height=140;
+    im.loading='lazy'; im.decoding='async'; im.setAttribute('fetchpriority','low');
+    im.width=100; im.height=100;
+    im.style.maxWidth='100%'; im.style.height='auto';
     el.appendChild(im);
     col.appendChild(el);
   });
@@ -950,22 +987,60 @@ function finishSpin(sym, idx){
     });
 }
 
-// ===== Stars BG =====
+// ===== Stars BG - ANDROID OPTIMIZED =====
 (function stars(){
   const c = qs('stars');
+  if (!c) return;
   const ctx = c.getContext('2d');
-  function resize(){ c.width = innerWidth * devicePixelRatio; c.height = innerHeight * devicePixelRatio; }
-  resize(); addEventListener('resize', resize);
-  const N = 160;
-  const stars = new Array(N).fill(0).map(()=>({ x: Math.random()*c.width, y: Math.random()*c.height, z: Math.random()*1+0.3, r: Math.random()*1.4+0.3 }));
+  
+  // REDUCE STARS FOR MOBILE PERFORMANCE
+  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const N = isMobile ? 80 : 160; // Kurangi separuh untuk mobile
+  
+  function resize(){ 
+    const scale = Math.min(devicePixelRatio, 2); // Limit pixel ratio
+    c.width = innerWidth * scale; 
+    c.height = innerHeight * scale; 
+  }
+  resize(); 
+  
+  // THROTTLE RESIZE EVENT
+  let resizeTimeout;
+  addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(resize, 100);
+  });
+  
+  const stars = new Array(N).fill(0).map(()=>({ 
+    x: Math.random()*c.width, 
+    y: Math.random()*c.height, 
+    z: Math.random()*0.8+0.2, // Slower movement
+    r: Math.random()*1.2+0.2 
+  }));
+  
   let t=0;
-  function loop(){
-    t+=0.016; ctx.clearRect(0,0,c.width,c.height);
+  let lastTime = 0;
+  
+  function loop(currentTime){
+    // LIMIT FPS TO 30 FOR MOBILE
+    if (currentTime - lastTime < (isMobile ? 33 : 16)) {
+      requestAnimationFrame(loop);
+      return;
+    }
+    lastTime = currentTime;
+    
+    t+=0.012; // Slower animation
+    ctx.clearRect(0,0,c.width,c.height);
+    
     for(const s of stars){
-      s.y += s.z*0.6; if(s.y>c.height) s.y = 0;
-      ctx.globalAlpha = 0.6 + Math.sin((s.x+s.y+t*30)/99)*0.2;
-      ctx.beginPath(); ctx.arc(s.x,s.y,s.r*devicePixelRatio,0,Math.PI*2);
-      ctx.fillStyle = '#7dd3fc'; ctx.fill();
+      s.y += s.z*0.4; // Slower movement
+      if(s.y>c.height) s.y = 0;
+      
+      ctx.globalAlpha = 0.5 + Math.sin((s.x+s.y+t*20)/120)*0.15; // Dimmer, slower flicker
+      ctx.beginPath(); 
+      ctx.arc(s.x,s.y,s.r*Math.min(devicePixelRatio, 2),0,Math.PI*2);
+      ctx.fillStyle = '#7dd3fc'; 
+      ctx.fill();
     }
     requestAnimationFrame(loop);
   }
@@ -1014,9 +1089,26 @@ function finishSpin(sym, idx){
   setSymbol(sel.value || tickers[0].value); sel.value = sel.value || tickers[0].value;
 
   let dpr = 1;
-  function resize(){ dpr = devicePixelRatio||1; cv.width = cv.clientWidth*dpr; cv.height = cv.clientHeight*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); draw(); }
-  addEventListener('resize', resize); resize();
+  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  function resize(){ 
+    dpr = Math.min(devicePixelRatio || 1, 2); // Limit DPR for performance
+    cv.width = cv.clientWidth*dpr; 
+    cv.height = cv.clientHeight*dpr; 
+    ctx.setTransform(dpr,0,0,dpr,0,0); 
+    draw(); 
+  }
+  
+  // THROTTLE RESIZE
+  let resizeTimeout;
+  addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(resize, 150);
+  }); 
+  resize();
 
+  // OPTIMIZED TICK FUNCTION
+  let tickInterval;
   function tick(){
     const vol = Math.max(0.0005*base, base*0.002);
     const o = last;
@@ -1026,10 +1118,13 @@ function finishSpin(sym, idx){
     const l = Math.min(o,c) - Math.random()*vol*0.6;
     last = c;
     candles.push({ t: Math.floor(Date.now()/1000), o,h,l,c });
-    if(candles.length>20000) candles.shift();
+    if(candles.length>15000) candles.shift(); // Smaller buffer
     draw();
   }
-  setInterval(tick, 1000);
+  
+  // SLOWER UPDATE FOR MOBILE
+  const updateInterval = isMobile ? 2000 : 1000;
+  tickInterval = setInterval(tick, updateInterval);
 
   function SMA(arr, p){
     const out=[]; let sum=0;
@@ -1377,6 +1472,38 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     stopCryptoBeepSound();
   }
+});
+
+// ===== ANDROID PERFORMANCE CLEANUP =====
+// Clean up resources when page becomes hidden
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    // Clear timeouts and intervals
+    if (typeof tickInterval !== 'undefined') clearInterval(tickInterval);
+    if (typeof resizeDebounceTimeout !== 'undefined') clearTimeout(resizeDebounceTimeout);
+    if (typeof pointerMoveTimeout !== 'undefined') clearTimeout(pointerMoveTimeout);
+    if (typeof resizeTimeout !== 'undefined') clearTimeout(resizeTimeout);
+    
+    // Pause animations for background tabs
+    const canvas = document.querySelector('#stars');
+    if (canvas) {
+      canvas.style.display = 'none';
+    }
+  } else {
+    // Resume when visible
+    const canvas = document.querySelector('#stars');
+    if (canvas) {
+      canvas.style.display = 'block';
+    }
+  }
+});
+
+// Memory cleanup on page unload
+window.addEventListener('beforeunload', () => {
+  if (typeof tickInterval !== 'undefined') clearInterval(tickInterval);
+  clearTimeout(resizeDebounceTimeout);
+  clearTimeout(pointerMoveTimeout);
+  clearTimeout(resizeTimeout);
 });
 </script>
 </body>
