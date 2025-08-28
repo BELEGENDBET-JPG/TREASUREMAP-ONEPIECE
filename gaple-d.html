@@ -12,24 +12,25 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="format-detection" content="telephone=no">
 <meta name="msapplication-tap-highlight" content="no">
-<title>DOOR PRIZE GO GAPLE — Super Glossy HD (Lite)</title>
+<title>DOOR PRIZE GO GAPLE — Super Glossy HD (v2.0 ANDROID OPTIMIZED)</title>
 <!-- Preconnect untuk Google Fonts (kurangi blocking) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ===== PALET WARNA: SUPER GLOSSY HD ===== */
+/* ===== PALET WARNA: SUPER GLOSSY HD ANDROID OPTIMIZED ===== */
 :root{
   --bg:#100525; --panel:#2a1a5e; --panel-2:#1c1044; --ink:#ffffff; --muted:#c0c8ff;
   --a:#ffd700; --b:#00c6ff; --c:#00ff7f; --success:#28a745;
-  --glow-a:0 0 12px rgba(255,215,0,.7), 0 0 24px rgba(255,215,0,.4), 0 0 46px rgba(255,215,0,.25);
-  --glow-b:0 0 12px rgba(0,198,255,.6), 0 0 24px rgba(0,198,255,.35), 0 0 46px rgba(0,198,255,.2);
-  --radius:18px;
-  /* === NEON HIJAU VARIABEL === */
-  --neon:#39ff14; --neon2:#00ff88; --glow-neon: 0 0 14px rgba(57,255,20,.95), 0 0 26px rgba(57,255,20,.7), 0 0 48px rgba(57,255,20,.45), 0 0 72px rgba(57,255,20,.28);
+  --glow-a:0 0 8px rgba(255,215,0,.6), 0 0 16px rgba(255,215,0,.3);
+  --glow-b:0 0 8px rgba(0,198,255,.5), 0 0 16px rgba(0,198,255,.25);
+  --radius:16px;
+  /* === NEON HIJAU VARIABEL - REDUCED FOR ANDROID === */
+  --neon:#39ff14; --neon2:#00ff88; 
+  --glow-neon: 0 0 10px rgba(57,255,20,.8), 0 0 20px rgba(57,255,20,.5);
 }
 
-/* OPTIMASI PERFORMA ANDROID - HARDWARE ACCELERATION */
+/* OPTIMASI PERFORMA ANDROID - HARDWARE ACCELERATION ENHANCED */
 *{
   box-sizing:border-box;
   -webkit-tap-highlight-color:transparent;
@@ -49,30 +50,44 @@ html,body{
   -moz-osx-font-smoothing:grayscale;
   font-display:swap;
   overscroll-behavior:none;
+  -webkit-overflow-scrolling:touch;
 }
 
-/* HARDWARE ACCELERATION UNTUK SEMUA ELEMEN ANIMASI */
-.domino, .domino .inner, .face, .back, .gaple-board .spinlight, .gaple-board .spinlight-ccw, .chip {
+/* HARDWARE ACCELERATION UNTUK SEMUA ELEMEN ANIMASI - ENHANCED */
+.domino, .domino .inner, .face, .back, .gaple-board .spinlight, .gaple-board .spinlight-ccw, .chip, .main-container, .panel, .left-panel {
   transform:translateZ(0);
   -webkit-transform:translateZ(0);
   will-change:transform;
   -webkit-backface-visibility:hidden;
   backface-visibility:hidden;
+  contain:layout style paint;
 }
 
-/* OPTIMASI TOUCH EVENTS */
+/* OPTIMASI TOUCH EVENTS ENHANCED */
 button, .domino, .btn, .home-btn {
   touch-action:manipulation;
   -webkit-user-select:none;
   user-select:none;
   cursor:pointer;
+  -webkit-tap-highlight-color:rgba(0,0,0,0);
 }
 
-/* DISABLE HOVER EFFECTS ON TOUCH DEVICES */
+/* DISABLE HOVER EFFECTS ON TOUCH DEVICES - ENHANCED */
 @media (hover: none) and (pointer: coarse) {
-  .domino:hover, .btn:hover, .home-btn:hover {
+  .domino:hover, .btn:hover, .home-btn:hover, .domino.ready .back {
     transform:none !important;
     filter:none !important;
+    box-shadow:none !important;
+    outline:none !important;
+  }
+}
+
+/* REDUCE MOTION FOR LOW-END ANDROID */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 html,body{height:100%}
@@ -108,45 +123,54 @@ body{
 .panel, .left-panel{background:linear-gradient(160deg, var(--panel), var(--panel-2)); border-radius:16px; padding:16px; box-shadow:inset 0 1px 1px rgba(255,255,255,.12), 0 10px 20px rgba(0,0,0,.5); content-visibility:auto; contain:paint;}
 .panel h3{margin:0 0 10px; font-family:Orbitron; font-size:1rem; letter-spacing:.8px; color:#f0f8ff; text-shadow:0 0 4px rgba(255,255,255,.18)}
 
-/* ring hijau */
+/* ring hijau - ANDROID OPTIMIZED */
 .panel, .left-panel{ position:relative; isolation:isolate; }
-.panel{ box-shadow:inset 0 1px 1px rgba(255,255,255,.12), 0 10px 20px rgba(0,0,0,.5), var(--glow-neon); }
-.left-panel{ box-shadow:inset 0 1px 1px rgba(255,255,255,.12), 0 10px 20px rgba(0,0,0,.5), var(--glow-neon); }
-.panel::after, .left-panel::after{content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; padding:1.5px; background:linear-gradient(180deg, var(--neon), var(--neon2) 60%, var(--neon)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; filter: drop-shadow(0 0 12px rgba(57,255,20,.9)) drop-shadow(0 0 24px rgba(57,255,20,.65)) drop-shadow(0 0 46px rgba(57,255,20,.4)); opacity:.96; animation: neonPulse 2.8s ease-in-out infinite;}
-@keyframes neonPulse{ 0%,100%{ opacity:.92 } 50%{ opacity:1 } }
+.panel{ box-shadow:inset 0 1px 1px rgba(255,255,255,.12), 0 8px 16px rgba(0,0,0,.4), var(--glow-neon); }
+.left-panel{ box-shadow:inset 0 1px 1px rgba(255,255,255,.12), 0 8px 16px rgba(0,0,0,.4), var(--glow-neon); }
+.panel::after, .left-panel::after{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; padding:1.5px; 
+  background:linear-gradient(180deg, var(--neon), var(--neon2) 60%, var(--neon)); 
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); 
+  -webkit-mask-composite: xor; 
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude; 
+  filter: drop-shadow(0 0 8px rgba(57,255,20,.7)); 
+  opacity:.9; 
+  animation: neonPulse 3.5s ease-in-out infinite;
+}
+@keyframes neonPulse{ 0%,100%{ opacity:.85 } 50%{ opacity:.95 } }
 @media (prefers-reduced-motion: reduce){ .panel::after, .left-panel::after{ animation:none } }
 
 /* ===== MESIN PAPAN GAPLE ===== */
 .board-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px}
 .board-title{font-weight:800; letter-spacing:.7px; text-transform:uppercase; font-size:.95rem; color:#fff5e6}
 
-.gaple-board{position:relative; overflow:hidden; border-radius:18px; height: clamp(360px, 68vw, 560px); margin:8px 0 14px; background: radial-gradient(140% 100% at 50% 0%, rgba(255,215,0,.12), transparent 60%), repeating-linear-gradient(0deg, #1a103f 0 6px, #150c35 6px 12px); box-shadow:inset 0 0 0 1px rgba(255,255,255,.1), inset 0 0 70px rgba(0,0,0,.7); contain:paint; content-visibility:auto; contain-intrinsic-size: 520px;}
-.gaple-board::after{content:""; position:absolute; inset:10px; border-radius:14px; z-index:0; background: radial-gradient(60% 60% at 50% 50%, rgba(255,255,255,.75) 0%, rgba(255,255,255,0) 40%), conic-gradient(from 0deg at 50% 50%, #ff0000 0%, #ff7f00 12%, #ffff00 25%, #00ff00 37%, #00ffff 50%, #0066ff 62%, #8a00ff 75%, #ff00ff 87%, #ff0000 100%), radial-gradient(120% 120% at 50% 50%, rgba(0,0,0,0) 60%, rgba(0,0,0,.6) 100%); filter: brightness(1.05) saturate(1.7) blur(6px); opacity:.95;}
-.gaple-board .spinlight, .gaple-board .spinlight-ccw{position:absolute; inset:10px; border-radius:14px; z-index:0; pointer-events:none; mix-blend-mode: screen; filter: blur(12px) brightness(1.2) saturate(1.1);}
-.gaple-board .spinlight{background: radial-gradient(36% 36% at 50% 50%, rgba(255,255,255,.6) 0%, rgba(255,255,255,0) 60%), conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 44%, rgba(255,255,255,.9) 50%, rgba(255,255,255,0) 56%, rgba(255,255,255,0) 100%); animation: light-spin 12s linear infinite, light-breath 3s ease-in-out infinite;}
-.gaple-board .spinlight-ccw{background: radial-gradient(30% 30% at 50% 50%, rgba(255,255,255,.5) 0%, rgba(255,255,255,0) 55%), conic-gradient(from 20deg at 50% 50%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 47%, rgba(255,255,255,.85) 50%, rgba(255,255,255,0) 53%, rgba(255,255,255,0) 100%); animation: light-spin-ccw 16s linear infinite, light-breath 3.2s ease-in-out infinite;}
+.gaple-board{position:relative; overflow:hidden; border-radius:16px; height: clamp(340px, 60vw, 520px); margin:8px 0 14px; background: radial-gradient(120% 80% at 50% 0%, rgba(255,215,0,.08), transparent 50%), repeating-linear-gradient(0deg, #1a103f 0 6px, #150c35 6px 12px); box-shadow:inset 0 0 0 1px rgba(255,255,255,.1), inset 0 0 50px rgba(0,0,0,.6); contain:paint; content-visibility:auto; contain-intrinsic-size: 480px;}
+.gaple-board::after{content:""; position:absolute; inset:8px; border-radius:12px; z-index:0; background: radial-gradient(50% 50% at 50% 50%, rgba(255,255,255,.6) 0%, rgba(255,255,255,0) 35%), conic-gradient(from 0deg at 50% 50%, #ff0000 0%, #ff7f00 12%, #ffff00 25%, #00ff00 37%, #00ffff 50%, #0066ff 62%, #8a00ff 75%, #ff00ff 87%, #ff0000 100%); filter: brightness(1.02) saturate(1.4) blur(4px); opacity:.8;}
+.gaple-board .spinlight, .gaple-board .spinlight-ccw{position:absolute; inset:8px; border-radius:12px; z-index:0; pointer-events:none; mix-blend-mode: screen; filter: blur(8px) brightness(1.1) saturate(1.05);}
+.gaple-board .spinlight{background: radial-gradient(30% 30% at 50% 50%, rgba(255,255,255,.4) 0%, rgba(255,255,255,0) 55%), conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 46%, rgba(255,255,255,.7) 50%, rgba(255,255,255,0) 54%, rgba(255,255,255,0) 100%); animation: light-spin 15s linear infinite;}
+.gaple-board .spinlight-ccw{background: radial-gradient(25% 25% at 50% 50%, rgba(255,255,255,.35) 0%, rgba(255,255,255,0) 50%), conic-gradient(from 20deg at 50% 50%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 48%, rgba(255,255,255,.6) 50%, rgba(255,255,255,0) 52%, rgba(255,255,255,0) 100%); animation: light-spin-ccw 20s linear infinite;}
 @keyframes light-spin{ to{ transform: rotate(360deg); } }
-@keyframes light-breath { 0%,100% { opacity:.75 } 50% { opacity:1 } }
 @keyframes light-spin-ccw { to { transform: rotate(-360deg); } }
 @media (prefers-reduced-motion: reduce){ .gaple-board .spinlight, .gaple-board .spinlight-ccw{ animation:none } }
-.gaple-board .rim{position:absolute; inset:8px; border-radius:12px; pointer-events:none; box-shadow:inset 0 0 0 2px rgba(255,255,255,.1), inset 0 0 0 6px rgba(255,215,0,.14), inset 0 0 36px rgba(255,215,0,.18)}
+.gaple-board .rim{position:absolute; inset:6px; border-radius:10px; pointer-events:none; box-shadow:inset 0 0 0 1px rgba(255,255,255,.08), inset 0 0 0 4px rgba(255,215,0,.1)}
 .gaple-board .rim, .gaple-board .scan{ z-index:2; }
 @keyframes scan { from{transform:translateX(-100%)} to{transform:translateX(100%)} }
 
 .domino-grid{position:relative; z-index:3; display:grid; height:100%; padding:16px; gap:12px; grid-template-columns:repeat(7, 1fr); grid-template-rows:repeat(4, 1fr)}
 
-/* === DOMINO === */
-.domino{position:relative; width:100%; height:100%; perspective:700px; border-radius:12px; cursor:pointer}
-.domino .inner{position:absolute; inset:0; transition:transform .55s cubic-bezier(.2,.8,.2,1); transform-style:preserve-3d; backface-visibility:hidden}
+/* === DOMINO OPTIMIZED FOR ANDROID === */
+.domino{position:relative; width:100%; height:100%; perspective:600px; border-radius:10px; cursor:pointer}
+.domino .inner{position:absolute; inset:0; transition:transform .45s cubic-bezier(.2,.8,.2,1); transform-style:preserve-3d; backface-visibility:hidden}
 .domino.flipped .inner{transform:rotateY(180deg)}
-.face, .back{position:absolute; inset:0; border-radius:12px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.15), 0 10px 18px rgba(0,0,0,.42); backface-visibility:hidden}
+.face, .back{position:absolute; inset:0; border-radius:10px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.12), 0 6px 12px rgba(0,0,0,.35); backface-visibility:hidden}
 
-.back{border:4px solid transparent; background: linear-gradient(180deg,#2a1f55,#1c1044) padding-box, linear-gradient(135deg,#fff6cc 0%, #ffe680 20%, #ffd700 45%, #ffb700 65%, #a86d00 82%, #fff2ac 100%) border-box; display:grid; place-items:center; box-shadow:0 0 18px rgba(255,215,0,.38), inset 0 0 0 1px rgba(255,255,255,.1)}
-.back::before{content:""; position:absolute; inset:3px; border-radius:9px; background: linear-gradient(120deg, rgba(255,255,255,.46) 0%, rgba(255,255,255,0) 42%), radial-gradient(120px 60px at 18% 14%, rgba(255,248,220,.22), rgba(255,248,220,0)); mix-blend:screen; pointer-events:none}
-.back::after{content:""; position:absolute; left:14px; right:14px; top:12px; bottom:12px; border-radius:10px; background: radial-gradient(70% 60% at 50% 32%, rgba(255,255,255,.95) 0%, rgba(255,255,255,0) 55%), linear-gradient(180deg, #fff6cc 0%, #ffe680 18%, #ffd233 42%, #ffb700 66%, #d08a00 100%); box-shadow: inset 0 10px 16px rgba(255,255,255,.6), inset 0 -12px 18px rgba(168,109,0,.55), 0 0 18px rgba(255,208,0,.42);}
-.face{background:linear-gradient(180deg,#ffffff,#f0f0e0); transform:rotateY(180deg); border:1px solid rgba(0,0,0,.15)}
-.face::before{content:""; position:absolute; inset:0; border-radius:12px; background:linear-gradient(70deg, rgba(255,255,255,1), rgba(255,255,255,0) 40%); opacity:.55; transform: translateY(-6px) rotate(8deg); pointer-events:none}
-.divider{position:absolute; left:50%; top:6px; bottom:6px; width:2px; background:linear-gradient(#c8c8b4,#a1a18d); border-radius:2px}
+.back{border:3px solid transparent; background: linear-gradient(180deg,#2a1f55,#1c1044) padding-box, linear-gradient(135deg,#fff6cc 0%, #ffe680 20%, #ffd700 45%, #ffb700 65%, #a86d00 82%, #fff2ac 100%) border-box; display:grid; place-items:center; box-shadow:0 0 12px rgba(255,215,0,.3), inset 0 0 0 1px rgba(255,255,255,.08)}
+.back::before{content:""; position:absolute; inset:2px; border-radius:8px; background: linear-gradient(120deg, rgba(255,255,255,.35) 0%, rgba(255,255,255,0) 40%), radial-gradient(100px 50px at 16% 12%, rgba(255,248,220,.18), rgba(255,248,220,0)); mix-blend-mode:screen; pointer-events:none}
+.back::after{content:""; position:absolute; left:12px; right:12px; top:10px; bottom:10px; border-radius:8px; background: radial-gradient(60% 50% at 50% 30%, rgba(255,255,255,.8) 0%, rgba(255,255,255,0) 50%), linear-gradient(180deg, #fff6cc 0%, #ffe680 18%, #ffd233 42%, #ffb700 66%, #d08a00 100%); box-shadow: inset 0 6px 12px rgba(255,255,255,.5), inset 0 -8px 14px rgba(168,109,0,.45), 0 0 12px rgba(255,208,0,.3);}
+.face{background:linear-gradient(180deg,#ffffff,#f0f0e0); transform:rotateY(180deg); border:1px solid rgba(0,0,0,.12)}
+.face::before{content:""; position:absolute; inset:0; border-radius:10px; background:linear-gradient(60deg, rgba(255,255,255,.9), rgba(255,255,255,0) 35%); opacity:.45; transform: translateY(-4px) rotate(6deg); pointer-events:none}
+.divider{position:absolute; left:50%; top:4px; bottom:4px; width:1.5px; background:linear-gradient(#c8c8b4,#a1a18d); border-radius:1px}
 
 /* === AREA PIP === */
 .half{position:absolute; left:6px; right:6px; height:calc(50% - 8px); display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); gap:4px; padding:6px; place-items:center;}
@@ -347,17 +371,19 @@ const $ = (selector) => {
   return domCache.get(selector);
 };
 
-// Faster RAF dengan fallback
+// Faster RAF dengan fallback - ANDROID OPTIMIZED
+const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 const fastRAF = window.requestAnimationFrame || 
               window.webkitRequestAnimationFrame || 
-              ((fn) => setTimeout(fn, 16));
+              ((fn) => setTimeout(fn, isMobile ? 20 : 16));
 
-// Memory management - cleanup DOM cache setiap 30 detik
+// Memory management - cleanup DOM cache (faster for mobile)
+const cleanupInterval = isMobile ? 20000 : 30000;
 setInterval(() => {
-  if (domCache.size > 50) {
+  if (domCache.size > (isMobile ? 30 : 50)) {
     domCache.clear();
   }
-}, 30000);
+}, cleanupInterval);
 
 /* ==== ORIGINAL SCRIPT START ==== */
 /* ==================== OPTIMASI RUNTIME TANPA UBAH STRUKTUR/LOGIKA ==================== */
@@ -410,19 +436,37 @@ function getFX(){
   let W,H, raf=null; const particles=[]; const GRAV=0.05; const FRICTION=0.985;
   const DPR = Math.min(1.5, window.devicePixelRatio||1);
   function resize(){ W=innerWidth; H=innerHeight; cvs.width=W*DPR; cvs.height=H*DPR; cvs.style.width=W+'px'; cvs.style.height=H+'px'; ctx.setTransform(DPR,0,0,DPR,0,0); }
-  let resizeRAF=null; addEventListener('resize', ()=>{ if(resizeRAF) return; resizeRAF=requestAnimationFrame(()=>{ resize(); resizeRAF=null; }); }, {passive:true});
+  let resizeRAF=null; 
+  const resizeHandler = debounce(() => {
+    if(resizeRAF) return; 
+    resizeRAF=fastRAF(()=>{ 
+      resize(); 
+      resizeRAF=null; 
+    }); 
+  }, isMobile ? 150 : 100);
+  
+  addEventOptimized(window, 'resize', resizeHandler);
   resize();
   function addBurst({x=W*0.5,y=H*0.3,count=100,spread=Math.PI*2,speed=5,hueBase=Math.random()*360}={}){
-    for(let i=0;i<count;i++){
-      const a = (i/count)*spread + Math.random()*0.1;
+    // Reduce particle count for mobile performance
+    const particleCount = isMobile ? Math.min(count * 0.6, 60) : count;
+    for(let i=0;i<particleCount;i++){
+      const a = (i/particleCount)*spread + Math.random()*0.1;
       const sp = speed*(0.6 + Math.random()*0.8);
       particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:60+Math.random()*30,hue:hueBase + (Math.random()*80-40),size:2+Math.random()*2,alpha:1});
     }
-    if(!raf) raf=requestAnimationFrame(tick);
+    if(!raf) raf=fastRAF(tick);
   }
   function tick(){
     ctx.clearRect(0,0,W,H);
     if(!particles.length){ raf=null; return; }
+    
+    // Limit particles for mobile performance
+    const maxParticles = isMobile ? 100 : 200;
+    if (particles.length > maxParticles) {
+      particles.splice(maxParticles);
+    }
+    
     ctx.globalCompositeOperation='lighter';
     for(let i=particles.length-1;i>=0;i--){
       const p=particles[i];
@@ -431,7 +475,7 @@ function getFX(){
       ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
       if(p.life<=0 || p.y>H+20) particles.splice(i,1);
     }
-    raf=requestAnimationFrame(tick);
+    raf=fastRAF(tick);
   }
   FX = { burst: (big)=> addBurst({count: big?160:100, speed: big?7:5, hueBase: Math.random()*360}) };
   return FX;
@@ -1015,6 +1059,48 @@ document.addEventListener('visibilitychange', () => {
     stopBeepSound();
   }
 });
+
+// ===== ANDROID PERFORMANCE CLEANUP & MEMORY MANAGEMENT =====
+// Pause animations when page becomes hidden
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    // Stop all ongoing animations and timers
+    const animatedElements = document.querySelectorAll('.gaple-board .spinlight, .gaple-board .spinlight-ccw');
+    animatedElements.forEach(el => {
+      el.style.animationPlayState = 'paused';
+    });
+    
+    // Clear DOM cache more frequently when hidden
+    if (domCache.size > 10) {
+      domCache.clear();
+    }
+  } else {
+    // Resume animations when visible
+    const animatedElements = document.querySelectorAll('.gaple-board .spinlight, .gaple-board .spinlight-ccw');
+    animatedElements.forEach(el => {
+      el.style.animationPlayState = 'running';
+    });
+  }
+});
+
+// Memory cleanup on page unload
+window.addEventListener('beforeunload', () => {
+  domCache.clear();
+  if (typeof cleanupInterval !== 'undefined') clearInterval(cleanupInterval);
+});
+
+// Low memory warning handler for Android
+if ('memory' in performance && performance.memory) {
+  const checkMemory = () => {
+    if (performance.memory.usedJSHeapSize > performance.memory.jsHeapSizeLimit * 0.8) {
+      domCache.clear();
+      // Force garbage collection if available
+      if (window.gc) window.gc();
+    }
+  };
+  
+  setInterval(checkMemory, isMobile ? 10000 : 30000);
+}
 </script>
 </body>
 </html>
